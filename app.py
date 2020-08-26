@@ -17,15 +17,15 @@ import dill
 
 app = Flask(__name__)
 
-@app.route("/")
+@app.route('/')
 def index():
     return render_template('index.html')  
 
-@app.route("/about/")
+@app.route('/about/')
 def about():
-    return "This website is to demonstrate my cool machine learning prediction method.  Isn't this great?"
+    return 'This website is to demonstrate my cool machine learning prediction method.  Isn\'t this great?'
 
-@app.route("/predict/", methods=["GET"])
+@app.route('/predict/', methods=['GET'])
 def predict():
     try:
         MSZoning = request.args.get('mszoning')
@@ -46,6 +46,6 @@ def predict():
 
 #http://127.0.0.1:5000/predict/?mszoning=123.45fhjdhjfdhj&mssubclass=something
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run()
     
