@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section id="intro">
+   <p>Welcome to my House Price Prediction website.  At the moment, all the data has to be entered via the
+   query string in the URL.  <br><br>
+   This data should include a value for "mszoning", which is a categorical variable.  Some valid values
+   include "RL", "RM", and "FV".  (There are others...)  Note that any (non-empty) value added here is accepted,
+   but if it's not part of the training data then this will have no contribution to the prediction.
+   </p>
+ 
+   <p> 
+   The value for "mssubclass" is a numeric value.  In the training data these were all positive integer values, but
+   any numeric (floating point value) is accepted.  Similiarly, the value for "lotarea" should also be numeric.
+   </p>
+   
+   <p>Note that a slight bit of error checking is performed, namely the values for "mssubclass" and "lotarea" are
+   validated to be numeric.  If they aren't, an error message is displayed to the screen.
+   </p>
+</section>
+
+{% endblock %}
