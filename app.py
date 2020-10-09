@@ -48,7 +48,7 @@ def predict():
     prediction = str(model.predict(data)[0])
     
     return prediction
-
+#   #  
 #http://127.0.0.1:5000/predict/?mszoning=123.45fhjdhjfdhj&mssubclass=something
 
 if __name__ == '__main__':
