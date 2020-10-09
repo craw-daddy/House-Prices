@@ -23,14 +23,19 @@ def index():
 
 @app.route('/about/')
 def about():
-    return 'This website is to demonstrate my cool machine learning prediction method.  Isn\'t this great?'
+    return render_template('about.html')
 
-@app.route('/predict/', methods=['GET'])
+@app.route('/predict/', methods=['GET', 'POST'])
 def predict():
+    if request.method == 'GET':
+        user_inputs = request.args
+    elif request.method == 'POST':
+        user_inputs = request.form
+        
     try:
-        MSZoning = request.args.get('mszoning')
-        MSSubClass = float(request.args.get('mssubclass'))
-        LotArea = float(request.args.get('lotarea'))
+        MSZoning = user_inputs.get('mszoning', 'Nothing')
+        MSSubClass = float(user_inputs.get('mssubclass', 0))
+        LotArea = float(user_inputs.get('lotarea', 0))
     except ValueError:
         return 'One or more values are non-numeric!'
     

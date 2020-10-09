@@ -28,15 +28,15 @@ y_train = X_train.pop('SalePrice').values
 
 model = Pipeline([
         ('features', ColumnTransformer([
-                ('categorical', 
-                 OneHotEncoder(handle_unknown='ignore'), 
-                 ['MSZoning']),
-                ('numeric', StandardScaler(), 
-                 ['MSSubClass', 'LotArea'])])),
+                ('categorical', OneHotEncoder(handle_unknown='ignore'), 
+                     ['MSZoning']),
+                ('numeric', StandardScaler(), ['MSSubClass', 'LotArea'])])),
         ('estimator', GridSearchCV(Ridge(), 
                     param_grid={'alpha': np.logspace(-2, 3, 20)}, 
-                                   cv=5, verbose=1))
+                                   cv=5, n_jobs=2, verbose=1))
 ])
+
+print(X_train['MSZoning'].unique())
 
 model.fit(X_train[['MSZoning','MSSubClass','LotArea']], y_train)
 print(model.score(X_train[['MSZoning','MSSubClass','LotArea']], y_train))
