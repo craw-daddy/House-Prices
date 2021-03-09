@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-See this website where I have gotten the data from:
-https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data
-
-Created on Wed Aug 26 11:11:36 2020
+Created on Tue Mar  9 08:04:55 2021
 
 @author: martin
 """
@@ -19,38 +16,29 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')  
+    return render_template('index.html')
 
-@app.route('/about/')
-def about():
-    return render_template('about.html')
-
-@app.route('/predict/', methods=['GET', 'POST'])
+@app.route('/predict', methods=['GET'])
 def predict():
-    if request.method == 'GET':
-        user_inputs = request.args
-    elif request.method == 'POST':
-        user_inputs = request.form
-        
-    try:
-        MSZoning = user_inputs.get('mszoning', 'Nothing')
-        MSSubClass = float(user_inputs.get('mssubclass', 0))
-        LotArea = float(user_inputs.get('lotarea', 0))
-    except ValueError:
-        return 'One or more values are non-numeric!'
-    
-    data = pd.DataFrame({'MSZoning': [MSZoning],
-                         'MSSubClass': [MSSubClass],
-                         'LotArea': [LotArea]})
+    user_inputs = request.args
+            
+    #  Note:  It looks like column names must be in the same *order* they
+    #  were in during the training step, as well as having the same number
+    #  of columns as was present during training.  
+    categorical = ['MSSubClass', 'MSZoning', 'Neighborhood']
+    numeric = ['LotArea']
+    data = {}
+    for c in categorical:
+        data[c] = [user_inputs.get(c.lower(), 'None')]
+    for c in numeric:
+        data[c] = [float(user_inputs.get(c.lower(), 0))]
+    data = pd.DataFrame(data)
+
     with gzip.open('models/model.dill.gzip', 'rb') as f:
         model = dill.load(f)
-        
-    prediction = str(model.predict(data)[0])
     
-    return prediction
-#   #  
-#http://127.0.0.1:5000/predict/?mszoning=123.45fhjdhjfdhj&mssubclass=something
+    return str(model.predict(data)[0])
+
 
 if __name__ == '__main__':
     app.run()
-    
