@@ -21,7 +21,7 @@ def index():
 @app.route('/predict', methods=['GET'])
 def predict():
     user_inputs = request.args
-            
+
     #  Note:  It looks like column names must be in the same *order* they
     #  were in during the training step, as well as having the same number
     #  of columns as was present during training.  
@@ -32,6 +32,12 @@ def predict():
         data[c] = [user_inputs.get(c.lower(), 'None')]
     for c in numeric:
         data[c] = [float(user_inputs.get(c.lower(), 0))]
+    
+    #  Get the right data type to match the training data as strings
+    # and numbers are different data types
+    data['MSSubClass'] = int(data['MSSubClass'])
+    
+    print(data)
     data = pd.DataFrame(data)
 
     with gzip.open('models/model.dill.gzip', 'rb') as f:

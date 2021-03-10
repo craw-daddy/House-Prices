@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section id="intro">
+   <p>Welcome to my House Price Prediction website.  <br>
+   This website is designed to let a user input some features about a house 
+   and use this information to get a predicted house price.
+   </p>
+   
+   <form action="predict" method="POST">
+       <p><label for="lotarea">lotarea</label> 
+             <input type="text" name="lotarea" id="lotarea"/></p>
+       <p><label for="mssubclass">mssubclass</label> 
+             <input type="text" name="mssubclass" id="mssubclass"/></p>
+       <p><label for="mszoning">mszoning</label>
+            <select id="mszoning" name="mszoning" id="mszoning">
+              {% for val in mszoning_types %}
+                 <option value="{{val[0]}}">{{val[1]}}</option>
+              {% endfor %}
+          </select></p>
+       <p><label for="neighborhood">neighborhood</label>
+          <input type="text" name="neighborhood" id="neighborhood"/></p>
+       <p><input type="reset"><input type="submit"></p>
+   </form>
+   
+   <p><b>NOTE:</b> Data can be entered either through the form available 
+   (above) on this 
+   webpage, or via the query string to the URL "~/predict".  
+   The parameter names to be used 
+   in the query string are the values shown on the form below.  Note that
+   "mszoning" is a categorical variable.  
+   <br><br>
+   The value for "mssubclass" is a numeric value (although this is 
+   a categorical value!).  In the training data 
+   these were all positive integer values which represented a categorical value, 
+   but any numeric (floating point 
+   value) is accepted.  Similiarly, the value for "lotarea" should also 
+   be numeric.
+   </p>
+ 
+   <p>A slight bit of error checking is performed as values are
+   submitted, namely the values for "mssubclass" and 
+   "lotarea" are validated to be numeric.  If they aren't, an error 
+   message is displayed to the screen.
+   </p>
+</section>
+
+{% endblock %}
