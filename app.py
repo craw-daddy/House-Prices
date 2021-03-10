@@ -14,13 +14,25 @@ import dill
 
 app = Flask(__name__)
 
+mszoning_types = [('A','Agriculture'), 
+                  ('C','Commercial'),
+                  ('FV', 'Floating Village Residential'),
+                  ('I', 'Industrial'), 
+                  ('RH', 'Residential High Density'),
+                  ('RL', 'Residential Low Density'),
+                  ('RP', 'Residential Low Density Park'), 
+                  ('RM', 'Residential Medium Density')]
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index-advanced.html', mszoning_types=mszoning_types)
 
-@app.route('/predict', methods=['GET'])
+@app.route('/predict', methods=['GET', 'POST'])
 def predict():
-    user_inputs = request.args
+    if request.method == 'GET':
+        user_inputs = request.args
+    elif request.method == 'POST':
+        user_inputs = request.form
 
     #  Note:  It looks like column names must be in the same *order* they
     #  were in during the training step, as well as having the same number
@@ -28,14 +40,18 @@ def predict():
     categorical = ['MSSubClass', 'MSZoning', 'Neighborhood']
     numeric = ['LotArea']
     data = {}
-    for c in categorical:
-        data[c] = [user_inputs.get(c.lower(), 'None')]
-    for c in numeric:
-        data[c] = [float(user_inputs.get(c.lower(), 0))]
+    try:
+        for c in categorical:
+            data[c] = [user_inputs.get(c.lower(), 'None')]
+        for c in numeric:
+            data[c] = [float(user_inputs.get(c.lower(), 0))]
     
     #  Get the right data type to match the training data as strings
-    # and numbers are different data types
-    data['MSSubClass'] = [int(d) for d in data['MSSubClass']]
+    # and numbers are different data types and will be treated differently
+    # by the OneHotEncoder in the ML pipeline. 
+        data['MSSubClass'] = [int(d) for d in data['MSSubClass']]
+    except ValueError:
+        return 'One or more numeric values received non-numeric input!'
     
     print(data)
     data = pd.DataFrame(data)
