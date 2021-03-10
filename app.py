@@ -35,7 +35,7 @@ def predict():
     
     #  Get the right data type to match the training data as strings
     # and numbers are different data types
-    data['MSSubClass'] = int(data['MSSubClass'])
+    data['MSSubClass'] = [int(d) for d in data['MSSubClass']]
     
     print(data)
     data = pd.DataFrame(data)
