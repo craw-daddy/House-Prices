@@ -2,16 +2,19 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Mar  8 15:59:05 2021
+Last edited:  Wed July 20, 2022
 
 @author: martin
 
-Idea:  
-    1. Build a ML model using the House Price data.  
+Idea:
+    1. Build a ML model using the House Price data.
        https://www.kaggle.com/c/house-prices-advanced-regression-techniques
     2. Build a Flask app that can take input from a user and make predictions.
-    3. Deploy to Heroku. 
+    3. Deploy to Heroku.
 """
 
+import dill
+import gzip
 import pandas as pd
 import numpy as np
 
@@ -20,9 +23,6 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
-
-import dill
-import gzip
 
 X_train = pd.read_csv('data/train.csv')
 y_train = X_train.pop('SalePrice').values
@@ -34,10 +34,10 @@ numeric = ['LotArea']
 
 model = Pipeline([
         ('features', ColumnTransformer([
-            ('categorical', OneHotEncoder(handle_unknown='ignore'), 
+            ('categorical', OneHotEncoder(handle_unknown='ignore'),
              categorical),
             ('numeric', StandardScaler(), numeric)])),
-        ('estimator', GridSearchCV(Ridge(), 
+        ('estimator', GridSearchCV(Ridge(),
                         param_grid={'alpha': np.logspace(-1,0.5,20)},
                         cv=5, verbose=1))
         ])
