@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue Mar  9 08:04:55 2021
-Last updated Wed July 20, 2022.
+Last updated Tue July 26, 2022.
 
 @author: martin
 """
@@ -12,23 +12,17 @@ import dill
 import pandas as pd
 
 from flask import Flask, render_template, request
+from categories import MSSubClass_types, MSZoning_types, Neighborhood_types
 
 app = Flask(__name__)
-
-mszoning_types = [('A','Agriculture'),
-                  ('C','Commercial'),
-                  ('FV', 'Floating Village Residential'),
-                  ('I', 'Industrial'),
-                  ('RH', 'Residential High Density'),
-                  ('RL', 'Residential Low Density'),
-                  ('RP', 'Residential Low Density Park'),
-                  ('RM', 'Residential Medium Density')]
 
 @app.route('/')
 def index():
     """Show the main webpage."""
-    return render_template('index-advanced.html',
-                           mszoning_types=mszoning_types)
+    return render_template('index.html',
+                           MSSubClass_types=MSSubClass_types,
+                           MSZoning_types=MSZoning_types,
+                           Neighborhood_types=Neighborhood_types)
 
 @app.route('/predict', methods=['GET', 'POST'])
 def predict():
@@ -45,9 +39,9 @@ def predict():
     data = {}
     try:
         for c in categorical:
-            data[c] = [user_inputs.get(c.lower(), 'None')]
+            data[c] = [user_inputs.get(c, 'None')]
         for c in numeric:
-            data[c] = [float(user_inputs.get(c.lower(), 0))]
+            data[c] = [float(user_inputs.get(c, 0))]
 
     #  Get the right data type to match the training data
     # as strings and numbers are different data types and
@@ -58,7 +52,6 @@ def predict():
         return 'One or more numeric values received non-numeric input!'
 
     data = pd.DataFrame(data)
-
     with gzip.open('models/model.dill.gzip', 'rb') as f:
         model = dill.load(f)
 

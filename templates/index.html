@@ -1,9 +1,51 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-<p>Hello and welcome to my website!  <br><br>
-You will be able to do some machine learning here soon!
-</p>
+<section id="intro">
+   <p>Welcome to my House Price Prediction website.  <br>
+   This website is designed to let a user input some features about a house 
+   in Ames, Iowa, and use this information to get a predicted house price.
+   </p>
+   
+   <form action="predict" method="POST">
+       <p><label for="LotArea">Lot Area</label> 
+             <input type="text" name="LotArea" id="LotArea"/>
+       </p>
+       <p><label for="MSSubClass">MSSubClass</label> 
+             <select id="MSSubClass" name="MSSubClass">
+               {%- for val in MSSubClass_types %}
+                  <option value="{{val[0]}}">{{val[1]}}</option>
+               {%- endfor %}
+             </select>
+       </p>
+       <p><label for="MSZoning">MSZoning</label>
+            <select id="MSZoning" name="MSZoning">
+              {%- for val in MSZoning_types %}
+                 <option value="{{val[0]}}">{{val[1]}}</option>
+              {%- endfor %}
+            </select>
+       </p>
+       <p><label for="Neighborhood">Neighborhood</label>
+            <select id="Neighborhood" name="Neighborhood">
+              {%- for val in Neighborhood_types %}
+                 <option value="{{val[0]}}">{{val[1]}}</option>
+              {%- endfor %} 
+            </select>
+       </p>
+       <p><input type="reset"><input type="submit"></p>
+   </form>
+   
+   <p><b>NOTE:</b> Data can be entered through the form available 
+   on this webpage.  
+   <br><br>
+   The value for "Lot Area" should also 
+   be numeric.
+   </p>
+ 
+   <p>A slight bit of error checking is performed as values are
+   submitted, namely the value for "Lot Area" is validated to be 
+   numeric.  If it isn't', an error message is displayed to the screen.
+   </p>
+</section>
 
 {% endblock %}

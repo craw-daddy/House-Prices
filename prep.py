@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Mar  8 15:59:05 2021
-Last edited:  Wed July 20, 2022
+Last edited:  Tue July 26, 2022
 
 @author: martin
 
@@ -28,23 +28,29 @@ X_train = pd.read_csv('data/train.csv')
 y_train = X_train.pop('SalePrice').values
 
 print(X_train.info())
+print(X_train['MSSubClass'].unique())
+print(X_train['MSZoning'].unique())
+print(X_train['Neighborhood'].unique())
 
 categorical = ['MSSubClass', 'MSZoning', 'Neighborhood']
 numeric = ['LotArea']
 
-model = Pipeline([
-        ('features', ColumnTransformer([
+model = GridSearchCV(
+          Pipeline([
+            ('features', ColumnTransformer([
             ('categorical', OneHotEncoder(handle_unknown='ignore'),
              categorical),
             ('numeric', StandardScaler(), numeric)])),
-        ('estimator', GridSearchCV(Ridge(),
-                        param_grid={'alpha': np.logspace(-1,0.5,20)},
-                        cv=5, verbose=1))
-        ])
+            ('estimator', Ridge())
+            ]),
+          param_grid={'estimator__alpha': np.logspace(-1,0.5,20)},
+          cv=5, verbose=1)
 
 model.fit(X_train[categorical+numeric], y_train)
+
+print()
+print(f'Best parameters from GridSearch: {model.best_params_}')
 print(f'R^2 on training data: {model.score(X_train[categorical+numeric], y_train)}')
-print(model.named_steps['estimator'].best_params_)
 
 with gzip.open('models/model.dill.gzip', 'wb') as f:
-    dill.dump(model, f, recurse=True)
+    dill.dump(model.best_estimator_, f, recurse=True)
